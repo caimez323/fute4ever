@@ -30,7 +30,7 @@
                 </div>
 
                 <button id="reroll-dice" class="reroll-button">Relancer les dés</button>
-                
+
                 <div class="players-list">
                     <h3>Joueurs connectés</h3>
                     <div id="connected-players"></div>
@@ -38,7 +38,17 @@
             </div>
             <div class="player-info">
                 <p id="player-username"></p>
-                <img id="player-image" src="https://via.placeholder.com/100" alt="Image joueur" class="player-image">
+
+                <!-- Nouvelle image avec possibilité d'agrandir -->
+                <div id="image-container">
+                    <img id="player-avatar" src="https://escaleajeux.fr/t/tf4ev.jpg" alt="Image du joueur" class="clickable-image">
+                    <textarea id="image-text" class="image-text" placeholder="Écrivez ici..." style="display:none;"></textarea>
+                </div>
+            </div>
+
+            <!-- Image agrandie et dessin -->
+            <div id="large-image-container" style="display: none;">
+                <canvas id="image-canvas"></canvas>
             </div>
         </section>
     </div>

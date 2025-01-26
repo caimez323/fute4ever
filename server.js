@@ -7,28 +7,30 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+// Middleware pour servir les fichiers statiques (CSS, JS, images, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+let players = [];
+
 io.on('connection', (socket) => {
-    console.log('New client connected');
-    
-    socket.on('disconnect', () => {
-        console.log('Client disconnected');
+    console.log('Un joueur est connecté');
+
+    socket.on('player-join', (data) => {
+        players.push({ username: data.username });
+        io.emit('update-players', players); // Envoie la liste des joueurs à tous les clients
     });
-    
-    // Custom event to handle player actions
-    socket.on('playerAction', (data) => {
-        console.log('Player action received:', data);
-        // Broadcast action to all connected clients
-        io.emit('playerAction', data);
+
+    socket.on('disconnect', () => {
+        players = players.filter(player => player.socketId !== socket.id);
+        io.emit('update-players', players); // Met à jour la liste des joueurs
+        console.log('Un joueur est déconnecté');
     });
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+server.listen(3000, () => {
+    console.log('Serveur démarré sur http://localhost:3000');
 });

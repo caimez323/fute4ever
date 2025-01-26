@@ -174,7 +174,7 @@ h3 {
 #image-canvas {
     width: 80vw;
     height: 80vh;
-    background-image: url('https://escaleajeux.fr/t/tf4ev.jpg');
+    background-image: url('./grille/G1.png');
     background-size: contain;
     border: 5px solid #333;
 }

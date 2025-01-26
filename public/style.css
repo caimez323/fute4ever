@@ -191,3 +191,21 @@ h3 {
     border: none;
     border-radius: 4px;
 }
+
+.close-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    background-color: #0056b3;
+}
+.image-text {
+    display: none; /* Supprimer complètement la barre de texte */
+}

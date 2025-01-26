@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu de Société en Ligne</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="/socket.io/socket.io.js"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Écran de connexion -->
+        <section id="login-section" class="login-screen">
+            <div class="login-box">
+                <h1>Jeu de Société en Ligne</h1>
+                <form id="login-form">
+                    <input type="text" id="username" placeholder="Votre nom" required>
+                    <button type="submit">Rejoindre</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Écran de jeu -->
+        <section id="game-section" class="game-screen" style="display: none;">
+            <div class="game-content">
+                <div class="central-game-area">
+                    <!-- Zone des dés -->
+                    <div id="dice-container" class="dice-area">
+                        <!-- Les dés colorés vont apparaître ici -->
+                    </div>
+                    <button id="roll-dice" class="roll-button">Lancer les dés</button>
+                </div>
+
+                <div class="players-sidebar">
+                    <div id="connected-players" class="player-list">
+                        <!-- Les joueurs seront ajoutés dynamiquement ici -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profil du joueur -->
+            <div class="player-profile-section">
+                <div id="player-details" class="player-profile">
+                    <img id="player-profile-image" src="" alt="Profil du joueur">
+                </div>
+                <div class="player-name-banner">
+                    <span id="player-name"></span>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

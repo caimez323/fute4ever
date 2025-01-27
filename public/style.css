@@ -318,3 +318,59 @@ h3 {
 .canvas-button:hover {
     background-color: #0056b3;
 }
+
+.canvas-controls {
+    position: absolute;
+    top: 20px; /* Place les contrôles en haut */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Toujours au-dessus */
+}
+
+.canvas-controls label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+#color-picker,
+#thickness-picker {
+    width: auto;
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.canvas-button {
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.canvas-button:hover {
+    background-color: #0056b3;
+}
+
+#player-avatar {
+    width: 150px; /* Taille augmentée */
+    height: 150px; /* Proportion carrée */
+    border-radius: 10%; /* Légèrement arrondi, ajustable selon tes besoins */
+    object-fit: cover; /* L'image remplit bien son conteneur sans être déformée */
+    margin: 15px auto; /* Ajout d'espacement autour et centrage */
+    display: block; /* Centre dans le conteneur parent */
+    border: 2px solid #ddd; /* Bordure subtile */
+}

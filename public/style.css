@@ -209,3 +209,87 @@ h3 {
 .image-text {
     display: none; /* Supprimer complètement la barre de texte */
 }
+
+/* Cercle pour la zone de dés */
+.circle-zone {
+    width: 200px;
+    height: 200px;
+    border: 2px dashed grey;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 20px auto;
+    background-color: #f0f0f0;
+}
+
+/* Zone où les dés relancés apparaissent */
+.dice-roll-area {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.dice {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    margin: 5px;
+}
+
+.dice.green { background-color: green; }
+.dice.grey { background-color: grey; }
+.dice.blue { background-color: blue; }
+.dice.yellow { background-color: orange; }
+.dice.pink { background-color: pink; }
+.dice.white { background-color: white; color: black; }
+
+.reroll-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.reroll-button:hover {
+    background-color: #0056b3;
+}
+
+.circle-zone {
+    width: 200px;
+    height: 200px;
+    border: 2px dashed grey;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 20px auto;
+    background-color: #f0f0f0;
+}
+
+.dice {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}

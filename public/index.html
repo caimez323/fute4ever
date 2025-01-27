@@ -20,6 +20,9 @@
 
         <section id="game-section" class="game-screen" style="display: none;">
             <div class="game-content">
+                <div class="circle-zone">
+                    <!-- Dés placés ici ne seront pas relancés -->
+                </div>
                 <div class="dice-container">
                     <div class="dice green">1</div>
                     <div class="dice grey">2</div>
@@ -39,14 +42,11 @@
             <div class="player-info">
                 <p id="player-username"></p>
 
-                <!-- Nouvelle image avec possibilité d'agrandir -->
                 <div id="image-container">
                     <img id="player-avatar" src="./grille/G1.png" alt="Image du joueur" class="clickable-image">
-                    <textarea id="image-text" class="image-text" placeholder="Écrivez ici..." style="display:none;"></textarea>
                 </div>
             </div>
 
-            <!-- Image agrandie et dessin -->
             <div id="large-image-container" style="display: none;">
                 <canvas id="image-canvas"></canvas>
                 <button id="close-large-image" class="close-button">Retour</button>

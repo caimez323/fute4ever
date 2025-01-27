@@ -131,7 +131,6 @@ rerollButton.addEventListener('click', () => {
 
 // Recevoir la mise à jour des dés du serveur et afficher sur tous les clients
 socket.on('update-dice', (newDice) => {
-    dice = newDice;
     drawDice(newDice);
 });
 

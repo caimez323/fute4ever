@@ -48,9 +48,20 @@
             </div>
 
             <div id="large-image-container" style="display: none;">
+                <div class="canvas-controls">
+                    <label for="color-picker">Couleur :</label>
+                    <input type="color" id="color-picker" value="#000000">
+            
+                    <label for="thickness-picker">Épaisseur :</label>
+                    <input type="range" id="thickness-picker" min="1" max="10" value="2">
+            
+                    <button id="eraser-button" class="canvas-button">Gomme</button>
+                    <button id="draw-button" class="canvas-button">Dessiner</button>
+                </div>
                 <canvas id="image-canvas"></canvas>
                 <button id="close-large-image" class="close-button">Retour</button>
             </div>
+            
             
         </section>
     </div>

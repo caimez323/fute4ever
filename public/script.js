@@ -14,6 +14,18 @@ const ctx = canvas.getContext('2d');
 const diceContainer = document.querySelector('.dice-container');
 const circleZone = document.querySelector('.circle-zone'); // Zone circulaire grise
 
+const colorPicker = document.getElementById('color-picker');
+const thicknessPicker = document.getElementById('thickness-picker');
+const eraserButton = document.getElementById('eraser-button');
+const drawButton = document.getElementById('draw-button');
+
+let isDrawing = false;
+let isErasing = false; // Mode gomme
+let currentColor = colorPicker.value; // Couleur actuelle
+let currentThickness = thicknessPicker.value; // Épaisseur actuelle
+
+
+
 let currentPlayer = '';
 let savedImageData = null; // Stocker les modifications du canvas
 
@@ -77,12 +89,10 @@ playerAvatar.addEventListener('click', () => {
 });
 
 // Gestion du dessin sur le canvas
-let isDrawing = false;
+
 canvas.addEventListener('mousedown', (e) => {
     isDrawing = true;
-    const rect = canvas.getBoundingClientRect(); // Obtenir la position du canvas
-
-    // Calculer les coordonnées relatives
+    const rect = canvas.getBoundingClientRect();
     const x = (e.clientX - rect.left) * (canvas.width / rect.width);
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
@@ -96,6 +106,16 @@ canvas.addEventListener('mousemove', (e) => {
         const x = (e.clientX - rect.left) * (canvas.width / rect.width);
         const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
+        if (isErasing) {
+            ctx.globalCompositeOperation = 'destination-out'; // Mode effacement
+            ctx.lineWidth = currentThickness * 2; // Gomme plus large
+            ctx.strokeStyle = 'rgba(0,0,0,1)';
+        } else {
+            ctx.globalCompositeOperation = 'source-over'; // Mode dessin
+            ctx.lineWidth = currentThickness;
+            ctx.strokeStyle = currentColor;
+        }
+
         ctx.lineTo(x, y);
         ctx.stroke();
     }
@@ -104,6 +124,26 @@ canvas.addEventListener('mousemove', (e) => {
 
 canvas.addEventListener('mouseup', () => {
     isDrawing = false;
+});
+
+// Mise à jour de la couleur
+colorPicker.addEventListener('input', (e) => {
+    currentColor = e.target.value;
+});
+
+// Mise à jour de l'épaisseur
+thicknessPicker.addEventListener('input', (e) => {
+    currentThickness = e.target.value;
+});
+
+// Activer le mode gomme
+eraserButton.addEventListener('click', () => {
+    isErasing = true;
+});
+
+// Activer le mode dessin
+drawButton.addEventListener('click', () => {
+    isErasing = false;
 });
 
 // Sauvegarde des modifications et retour

@@ -18,16 +18,19 @@ const thicknessPicker = document.getElementById('thickness-picker');
 const eraserButton = document.getElementById('eraser-button');
 const drawButton = document.getElementById('draw-button');
 
+const resetDiceButton = document.getElementById('reset-dice');
+const undoButton = document.getElementById('undo-button');
+let undoStack = [];
+const MAX_UNDO = 20;
+let annotationCanvas = null;
+
 let isDrawing = false;
 let isErasing = false;
 let currentColor = colorPicker.value;
 let currentThickness = thicknessPicker.value;
 let currentPlayer = '';
 
-// On garde l'image de fond en mémoire pour pouvoir la redessiner
 let bgImage = null;
-// Les annotations sont stockées séparément (canvas offscreen)
-let annotationCanvas = null;
 
 let dice = [];
 
@@ -127,11 +130,14 @@ playerAvatar.addEventListener('click', () => {
     annotationCanvas.height = h;
 
     redrawCanvas();
+    undoStack = [];
   };
 });
 
 canvas.addEventListener('mousedown', (e) => {
+  if (!annotationCanvas) return; // canvas pas encore initialisé
   isDrawing = true;
+  saveUndoState(); // snapshot AVANT le trait
   const { x, y } = getCanvasPos(e);
   const ac = annotationCanvas.getContext('2d');
   ac.beginPath();
@@ -139,12 +145,11 @@ canvas.addEventListener('mousedown', (e) => {
 });
 
 canvas.addEventListener('mousemove', (e) => {
-  if (!isDrawing) return;
+  if (!isDrawing || !annotationCanvas) return;
   const { x, y } = getCanvasPos(e);
   const ac = annotationCanvas.getContext('2d');
 
   if (isErasing) {
-    // Efface sur le canvas d'annotations uniquement
     ac.globalCompositeOperation = 'destination-out';
     ac.lineWidth = currentThickness * 2;
     ac.strokeStyle = 'rgba(0,0,0,1)';
@@ -156,8 +161,6 @@ canvas.addEventListener('mousemove', (e) => {
 
   ac.lineTo(x, y);
   ac.stroke();
-
-  // Recompose le canvas visible à chaque frame
   redrawCanvas();
 });
 
@@ -171,7 +174,23 @@ function getCanvasPos(e) {
     y: (e.clientY - rect.top) * (canvas.height / rect.height),
   };
 }
+function saveUndoState() {
+  if (!annotationCanvas) return; // sécurité si canvas pas encore ouvert
+  const ac = annotationCanvas.getContext('2d');
+  undoStack.push(ac.getImageData(0, 0, annotationCanvas.width, annotationCanvas.height));
+  if (undoStack.length > MAX_UNDO) undoStack.shift();
+}
 
+undoButton.addEventListener('click', () => {
+  if (!annotationCanvas || undoStack.length === 0) return;
+  const ac = annotationCanvas.getContext('2d');
+  const previousState = undoStack.pop();
+  ac.putImageData(previousState, 0, 0);
+  redrawCanvas();
+});
+resetDiceButton.addEventListener('click', () => {
+  socket.emit('reset-dice');
+});
 colorPicker.addEventListener('input', (e) => { currentColor = e.target.value; });
 thicknessPicker.addEventListener('input', (e) => { currentThickness = e.target.value; });
 eraserButton.addEventListener('click', () => { isErasing = true; });
@@ -182,3 +201,4 @@ document.getElementById('close-large-image').addEventListener('click', () => {
   playerAvatar.src = canvas.toDataURL();
   largeImageContainer.style.display = 'none';
 });
+

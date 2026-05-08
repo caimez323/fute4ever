@@ -231,6 +231,12 @@ h3 {
     flex-wrap: wrap;
     margin-top: 20px;
 }
+.dice-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
 
 .dice {
     width: 50px;

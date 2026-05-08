@@ -57,6 +57,12 @@ io.on('connection', (socket) => {
     io.emit('update-dice', dice);
   });
 
+  // Remettre tous les dés hors du cercle
+    socket.on('reset-dice', () => {
+    dice = dice.map((die) => ({ ...die, inCircle: false }));
+    io.emit('update-dice', dice);
+    });
+
   socket.on('disconnect', () => {
     players = players.filter((p) => p.socketId !== socket.id);
     io.emit('update-players', players);

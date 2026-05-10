@@ -1,7 +1,7 @@
 /* Global Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #053f2c;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,6 +9,21 @@ body {
     flex-direction: column;
 }
 
+.turn-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin-right: 8px;
+  vertical-align: middle;
+  transition: background-color 0.3s ease;
+}
+
+.turn-dot.active {
+  background-color: #4CAF50;
+  box-shadow: 0 0 6px #4CAF50;
+}
 .container {
     display: flex;
     justify-content: space-between;

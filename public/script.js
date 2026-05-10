@@ -30,6 +30,7 @@ let currentColor = colorPicker.value;
 let currentThickness = thicknessPicker.value;
 let currentPlayer = '';
 let isMyTurn = false;
+let lastPlayers = [];
 
 let bgImage = null;
 
@@ -60,25 +61,43 @@ socket.on('update-players', (players) => {
   });
 });
 
+socket.on('update-players', (players) => {
+  lastPlayers = players;
+  renderPlayersList(players, activeUsername);
+});
+
 socket.on('update-turn', ({ activeSocketId, activeUsername }) => {
   isMyTurn = (socket.id === activeSocketId);
+
   rerollButton.disabled = !isMyTurn;
   resetDiceButton.disabled = !isMyTurn;
 
   const turnIndicator = document.getElementById('turn-indicator');
   if (turnIndicator) {
-    if (activeUsername) {
-      turnIndicator.textContent = isMyTurn
-        ? '🎲 C\'est votre tour !'
-        : `⏳ Tour de ${activeUsername}`;
-      turnIndicator.style.color = isMyTurn ? '#4CAF50' : '#888';
-    } else {
-      turnIndicator.textContent = 'En attente de joueurs...';
-    }
+    turnIndicator.textContent = isMyTurn
+      ? '🎲 C\'est votre tour !'
+      : `⏳ Tour de ${activeUsername}`;
+    turnIndicator.style.color = isMyTurn ? '#4CAF50' : '#888';
   }
 
-  if (dice.length > 0) drawDice(dice, false); // ← false, pas d'animation ici
+  renderPlayersList(lastPlayers, activeUsername);
+  if (dice.length > 0) drawDice(dice, false);
 });
+
+
+function renderPlayersList(players, activeUsername) {
+  playersContainer.innerHTML = '';
+  players.forEach((player) => {
+    const el = document.createElement('div');
+    const isActive = player.username === activeUsername;
+    el.innerHTML = `
+      <span class="turn-dot ${isActive ? 'active' : ''}"></span>
+      ${player.username}
+    `;
+    if (isActive) el.style.fontWeight = 'bold';
+    playersContainer.appendChild(el);
+  });
+}
 
 // ─── Dés ─────────────────────────────────────────────────────────────────────
 

@@ -63,10 +63,15 @@ socket.on('player-join', (data) => {
   });
 
 socket.on('reset-dice', () => {
-  dice = dice.map((die) => ({ ...die, inCircle: false }));
+  // Relance les dés hors du cercle ET remet tous les dés hors du cercle
+  dice = dice.map((die) => ({
+    ...die,
+    inCircle: false,
+    value: Math.floor(Math.random() * 6) + 1, // ← tous les dés sont relancés
+  }));
   io.emit('update-dice', dice);
 
-  // Passe au joueur suivant (rotation circulaire)
+  // Passe au joueur suivant
   if (players.length > 0) {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
   }

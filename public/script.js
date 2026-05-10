@@ -59,9 +59,9 @@ socket.on('update-players', (players) => {
     playersContainer.appendChild(el);
   });
 });
+
 socket.on('update-turn', ({ activeSocketId, activeUsername }) => {
   isMyTurn = (socket.id === activeSocketId);
-
   rerollButton.disabled = !isMyTurn;
   resetDiceButton.disabled = !isMyTurn;
 
@@ -69,7 +69,7 @@ socket.on('update-turn', ({ activeSocketId, activeUsername }) => {
   if (turnIndicator) {
     if (activeUsername) {
       turnIndicator.textContent = isMyTurn
-        ? 'C\'est votre tour !'
+        ? '🎲 C\'est votre tour !'
         : `⏳ Tour de ${activeUsername}`;
       turnIndicator.style.color = isMyTurn ? '#4CAF50' : '#888';
     } else {
@@ -77,20 +77,19 @@ socket.on('update-turn', ({ activeSocketId, activeUsername }) => {
     }
   }
 
-  // ← Re-rendu des dés avec le bon état isMyTurn
-  if (dice.length > 0) drawDice(dice);
+  if (dice.length > 0) drawDice(dice, false); // ← false, pas d'animation ici
 });
 
 // ─── Dés ─────────────────────────────────────────────────────────────────────
 
 socket.on('init-dice', (serverDice) => {
   dice = serverDice;
-  drawDice(dice);
+  drawDice(dice,false);
 });
 
 socket.on('update-dice', (serverDice) => {
   dice = serverDice;
-  drawDice(dice);
+  drawDice(dice,true);
 });
 
 rerollButton.addEventListener('click', () => {
@@ -102,7 +101,7 @@ function onDieClick(color) {
   socket.emit('move-die', color);
 }
 
-function drawDice(diceList) {
+function drawDice(diceList, animate = false) {
   diceContainer.innerHTML = '';
   circleZone.innerHTML = '';
 
@@ -110,6 +109,13 @@ function drawDice(diceList) {
     const el = document.createElement('div');
     el.className = `dice ${die.color}`;
     el.textContent = die.value;
+
+    // Animation uniquement sur les dés hors du cercle (ceux qui ont été relancés)
+    if (animate && !die.inCircle) {
+      el.classList.add('dice-rolling');
+      // Retire la classe après l'animation pour pouvoir la rejouer
+      el.addEventListener('animationend', () => el.classList.remove('dice-rolling'), { once: true });
+    }
 
     if (isMyTurn) {
       el.title = `Cliquer pour ${die.inCircle ? 'retirer du' : 'placer dans le'} cercle`;

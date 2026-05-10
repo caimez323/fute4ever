@@ -29,6 +29,7 @@ let isErasing = false;
 let currentColor = colorPicker.value;
 let currentThickness = thicknessPicker.value;
 let currentPlayer = '';
+let isMyTurn = false;
 
 let bgImage = null;
 
@@ -58,6 +59,27 @@ socket.on('update-players', (players) => {
     playersContainer.appendChild(el);
   });
 });
+socket.on('update-turn', ({ activeSocketId, activeUsername }) => {
+  isMyTurn = (socket.id === activeSocketId);
+
+  rerollButton.disabled = !isMyTurn;
+  resetDiceButton.disabled = !isMyTurn;
+
+  const turnIndicator = document.getElementById('turn-indicator');
+  if (turnIndicator) {
+    if (activeUsername) {
+      turnIndicator.textContent = isMyTurn
+        ? 'C\'est votre tour !'
+        : `⏳ Tour de ${activeUsername}`;
+      turnIndicator.style.color = isMyTurn ? '#4CAF50' : '#888';
+    } else {
+      turnIndicator.textContent = 'En attente de joueurs...';
+    }
+  }
+
+  // ← Re-rendu des dés avec le bon état isMyTurn
+  if (dice.length > 0) drawDice(dice);
+});
 
 // ─── Dés ─────────────────────────────────────────────────────────────────────
 
@@ -76,18 +98,28 @@ rerollButton.addEventListener('click', () => {
 });
 
 function onDieClick(color) {
+  if (!isMyTurn) return; // bloque si ce n'est pas ton tour
   socket.emit('move-die', color);
 }
 
 function drawDice(diceList) {
   diceContainer.innerHTML = '';
   circleZone.innerHTML = '';
+
   diceList.forEach((die) => {
     const el = document.createElement('div');
     el.className = `dice ${die.color}`;
     el.textContent = die.value;
-    el.title = `Cliquer pour ${die.inCircle ? 'retirer du' : 'placer dans le'} cercle`;
-    el.addEventListener('click', () => onDieClick(die.color));
+
+    if (isMyTurn) {
+      el.title = `Cliquer pour ${die.inCircle ? 'retirer du' : 'placer dans le'} cercle`;
+      el.addEventListener('click', () => onDieClick(die.color));
+    } else {
+      el.title = "Ce n'est pas votre tour";
+      el.style.cursor = 'not-allowed';
+      el.style.opacity = '0.75';
+    }
+
     if (die.inCircle) {
       circleZone.appendChild(el);
     } else {

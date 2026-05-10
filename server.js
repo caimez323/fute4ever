@@ -7,6 +7,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+let currentPlayerIndex = 0; // index du joueur actif dans le tableau players
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
@@ -29,15 +31,18 @@ io.on('connection', (socket) => {
   // Envoie l'état actuel au nouveau joueur qui vient de se connecter
   socket.emit('init-dice', dice);
 
-  socket.on('player-join', (data) => {
-    // Évite les doublons si l'event est émis plusieurs fois
-    if (!players.find(p => p.socketId === socket.id)) {
-      players.push({ username: data.username, socketId: socket.id });
-    }
-    io.emit('update-players', players);
-    // Renvoie aussi l'état des dés au nouvel arrivant via broadcast
-    socket.emit('init-dice', dice);
+socket.on('player-join', (data) => {
+  if (!players.find(p => p.socketId === socket.id)) {
+    players.push({ username: data.username, socketId: socket.id });
+  }
+  io.emit('update-players', players);
+  // Informe tout le monde du joueur actif courant
+  io.emit('update-turn', {
+    activeSocketId: players[currentPlayerIndex]?.socketId ?? null,
+    activeUsername: players[currentPlayerIndex]?.username ?? null,
   });
+  socket.emit('init-dice', dice);
+});
 
   // Un joueur relance les dés (seuls ceux hors du cercle changent de valeur)
   socket.on('reroll-dice', () => {
@@ -57,16 +62,39 @@ io.on('connection', (socket) => {
     io.emit('update-dice', dice);
   });
 
-  // Remettre tous les dés hors du cercle
-    socket.on('reset-dice', () => {
-    dice = dice.map((die) => ({ ...die, inCircle: false }));
-    io.emit('update-dice', dice);
-    });
+socket.on('reset-dice', () => {
+  dice = dice.map((die) => ({ ...die, inCircle: false }));
+  io.emit('update-dice', dice);
+
+  // Passe au joueur suivant (rotation circulaire)
+  if (players.length > 0) {
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+  }
+  io.emit('update-turn', {
+    activeSocketId: players[currentPlayerIndex]?.socketId ?? null,
+    activeUsername: players[currentPlayerIndex]?.username ?? null,
+  });
+});
 
   socket.on('disconnect', () => {
-    players = players.filter((p) => p.socketId !== socket.id);
-    io.emit('update-players', players);
-    console.log('Un joueur est déconnecté:', socket.id);
+  const leavingIndex = players.findIndex(p => p.socketId === socket.id);
+  players = players.filter(p => p.socketId !== socket.id);
+
+  // Recalibrer l'index si nécessaire
+  if (players.length === 0) {
+    currentPlayerIndex = 0;
+  } else {
+    if (leavingIndex <= currentPlayerIndex) {
+      currentPlayerIndex = Math.max(0, currentPlayerIndex - 1) % players.length;
+    }
+  }
+
+  io.emit('update-players', players);
+  io.emit('update-turn', {
+    activeSocketId: players[currentPlayerIndex]?.socketId ?? null,
+    activeUsername: players[currentPlayerIndex]?.username ?? null,
+  });
+  console.log('Un joueur est déconnecté:', socket.id);
   });
 });
 

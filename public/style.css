@@ -252,6 +252,12 @@ h3 {
     margin: 5px;
 }
 
+.reroll-button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .dice.green { background-color: green; }
 .dice.grey { background-color: grey; }
 .dice.blue { background-color: blue; }
